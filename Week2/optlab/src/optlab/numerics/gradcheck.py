@@ -25,7 +25,18 @@ def numerical_gradient(f: Callable[[Vec], float], x: Vec, h: float = 1e-6) -> Ve
     near the optimum of the truncation/rounding trade-off for float64; day 1 asks you to
     plot the error against `h` and find the U-curve yourself.
     """
-    raise NotImplementedError("[DAY 1] lab 1")
+    # central different f'(x) = [f(x+h) - f(x-h)]/2h
+    g       = np.zeros_like(x, dtype = np.float64)
+    step    = np.zeros_like(x, dtype = np.float64)
+
+    for i in range(x.size):
+        step[i] = h
+        g[i] = (f(x + step) - f(x - step)) / (2 * h)
+        step[i] = 0.0
+    return g
+
+
+    #raise NotImplementedError("[DAY 1] lab 1")
 
 
 def numerical_jacobian(f: Callable[[Vec], Vec], x: Vec, h: float = 1e-6) -> Mat:

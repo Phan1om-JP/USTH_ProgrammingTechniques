@@ -49,7 +49,8 @@ class SGD(IOptimizer):
 
     def minimize(self, objective: object, x0: Vec) -> OptimizeResult:
         """Requires an `IBatchObjective`."""
-        raise NotImplementedError("[DAY 3] lab 2")
+        #raise NotImplementedError("[DAY 3] lab 2")
+        
 
 
 class Adam(IOptimizer):

@@ -33,4 +33,10 @@ def standardize(X: np.ndarray) -> np.ndarray:
     California housing: conditioning is partly a property of the data, and a great deal
     of optimization difficulty is created by not doing this.
     """
-    raise NotImplementedError("[DAY 1] lab 3")
+    #raise NotImplementedError("[DAY 1] lab 3")
+
+    mean = X.mean(axis = 0)
+    centered = X - mean
+    std = X.std(axis = 0)
+    result = centered / std
+    return result

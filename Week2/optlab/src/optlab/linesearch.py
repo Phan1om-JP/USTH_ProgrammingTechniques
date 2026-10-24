@@ -16,7 +16,8 @@ class FixedStep(ILineSearch):
         self.alpha = alpha
 
     def step(self, objective: IObjective, x: Vec, g: Vec, d: Vec) -> float:
-        raise NotImplementedError("[DAY 2] lab 1")
+        #raise NotImplementedError("[DAY 2] lab 1")
+        return self.alpha
 
 
 class Armijo(ILineSearch):
@@ -45,4 +46,16 @@ class Armijo(ILineSearch):
         self.max_backtracks = max_backtracks
 
     def step(self, objective: IObjective, x: Vec, g: Vec, d: Vec) -> float:
-        raise NotImplementedError("[DAY 2] lab 2")
+        #raise NotImplementedError("[DAY 2] lab 2")
+        old_height = objective.value(x)
+        slope = g @ d
+        if slope >= 0:
+            raise ValueError("d is not a descent direction")
+        alpha = self.alpha0
+
+        for _ in range(self.max_backtracks):
+            new_height = objective.value(x + alpha * d)
+            if new_height <= old_height + self.c1 * alpha * slope:
+                return alpha
+            alpha = alpha * self.rho
+        raise LineSearchFailed()

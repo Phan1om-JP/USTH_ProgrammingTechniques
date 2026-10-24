@@ -32,12 +32,18 @@ class GLMLoss(IObjective, ITwiceDifferentiable, IBatchObjective):
 
     def value(self, w: Vec) -> float:
         """[DAY 1] The mean of phi over the samples."""
-        raise NotImplementedError("[DAY 1] lab 2")
+        #raise NotImplementedError("[DAY 1] lab 2")
+        return float(np.mean(self.pointwise.value(self.X @ w, self.y)))
 
     def gradient(self, w: Vec) -> Vec:
         """[DAY 1] X^T*phi'(Xw, y) / n."""
-        raise NotImplementedError("[DAY 1] lab 2")
+        #raise NotImplementedError("[DAY 1] lab 2")
+        # z = self.X @ w
+        # r = self.pointwise.d1(z, self.y)
+        # return (self.X.T @ r / len(self.y))
 
+        return self.batch_gradient(w, np.arange(self.n_samples))
+    
     def hessian(self, w: Vec) -> Mat:
         """[DAY 4] X^T DX / n with D = diag(phi''(Xw, y)).
 
@@ -51,7 +57,8 @@ class GLMLoss(IObjective, ITwiceDifferentiable, IBatchObjective):
     @property
     def n_samples(self) -> int:
         """[DAY 3] n."""
-        raise NotImplementedError("[DAY 3] lab 1")
+        #raise NotImplementedError("[DAY 3] lab 1")
+        return int(self.X.shape[0])
 
     def batch_gradient(self, w: Vec, idx: Index) -> Vec:
         """[DAY 3] The gradient over the subset `idx` only.
@@ -59,14 +66,25 @@ class GLMLoss(IObjective, ITwiceDifferentiable, IBatchObjective):
         Write this so that `gradient` becomes the special case over all indices, rather
         than duplicating the formula in two places.
         """
-        raise NotImplementedError("[DAY 3] lab 1")
+        #raise NotImplementedError("[DAY 3] lab 1")
+        Xb = self.X[idx]
+        yb = self.y[idx]
+        z = Xb @ w
+        r = self.pointwise.d1(z, yb)
+        return Xb.T @ r / len(idx)
+
 
 
 def linear_regression(X: Mat, y: Vec) -> GLMLoss:
     """[DAY 1] Least-squares regression: the Gaussian MLE."""
-    raise NotImplementedError("[DAY 1] lab 2")
+    #raise NotImplementedError("[DAY 1] lab 2")
+    return GLMLoss(X, y, SquaredError())
+
+
 
 
 def logistic_regression(X: Mat, y: Vec) -> GLMLoss:
     """[DAY 1] Logistic regression: the Bernoulli MLE."""
-    raise NotImplementedError("[DAY 1] lab 2")
+    #raise NotImplementedError("[DAY 1] lab 2")
+    return GLMLoss(X, y, LogisticNLL())
+

@@ -15,7 +15,8 @@ class SteepestDescent(IDirectionRule):
     """
 
     def direction(self, objective: IObjective, x: Vec, g: Vec) -> Vec:
-        raise NotImplementedError("[DAY 2] lab 1")
+        #raise NotImplementedError("[DAY 2] lab 1")
+        return -g
 
 
 class HeavyBall(IDirectionRule):
@@ -32,7 +33,13 @@ class HeavyBall(IDirectionRule):
         self._previous: Vec | None = None
 
     def direction(self, objective: IObjective, x: Vec, g: Vec) -> Vec:
-        raise NotImplementedError("[DAY 2] lab 3")
+        #raise NotImplementedError("[DAY 2] lab 3")
+        if self._previous is None: 
+            d = -g
+        else:
+            d = -g + self.beta * self._previous
+        self._previous = d
+        return d
 
 
 class NewtonDirection(IDirectionRule):

@@ -15,13 +15,16 @@ class SquaredError(IPointwiseLoss):
     """[DAY 1] phi(z, y) = 1/2(z - y)^2. The Gaussian negative log-likelihood."""
 
     def value(self, z: Vec, y: Vec) -> Vec:
-        raise NotImplementedError("[DAY 1] lab 2")
+        #raise NotImplementedError("[DAY 1] lab 2")
+        return 0.5 * (z - y) ** 2
 
     def d1(self, z: Vec, y: Vec) -> Vec:
-        raise NotImplementedError("[DAY 1] lab 2")
+        #raise NotImplementedError("[DAY 1] lab 2")
+        return z - y
 
     def d2(self, z: Vec, y: Vec) -> Vec:
-        raise NotImplementedError("[DAY 1] lab 2")
+        #raise NotImplementedError("[DAY 1] lab 2")
+        return np.ones_like(z)
 
 
 class LogisticNLL(IPointwiseLoss):
@@ -33,14 +36,20 @@ class LogisticNLL(IPointwiseLoss):
     """
 
     def value(self, z: Vec, y: Vec) -> Vec:
-        raise NotImplementedError("[DAY 1] lab 2")
+        #raise NotImplementedError("[DAY 1] lab 2")
+        result: Vec = np.maximum(z, 0) + np.log(1 + np.exp(-np.abs(z))) - y * z
+        return result
 
     def d1(self, z: Vec, y: Vec) -> Vec:
-        raise NotImplementedError("[DAY 1] lab 2")
+        #raise NotImplementedError("[DAY 1] lab 2")
+        s = 1 / (1 + np.exp(-z))
+        return s - y
 
     def d2(self, z: Vec, y: Vec) -> Vec:
-        raise NotImplementedError("[DAY 1] lab 2")
-
+        #raise NotImplementedError("[DAY 1] lab 2")
+        s = 1 / (1 + np.exp(-z))
+        return s * (1 - s)
+        
 
 class Huber(IPointwiseLoss):
     """[DAY 6] Quadratic near zero, linear beyond `delta`.

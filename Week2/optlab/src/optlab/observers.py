@@ -15,14 +15,17 @@ class History(IObserver):
         self.events: list[StepEvent] = []
 
     def on_step(self, event: StepEvent) -> None:
-        raise NotImplementedError("[DAY 2] lab 1")
+        #raise NotImplementedError("[DAY 2] lab 1")
+        self.events.append(event)
 
     @property
     def values(self) -> list[float]:
         """The objective value at each iteration."""
-        raise NotImplementedError("[DAY 2] lab 1")
+        #raise NotImplementedError("[DAY 2] lab 1")
+        return [e.value for e in self.events]
 
     @property
     def grad_norms(self) -> list[float]:
         """||grad f|| at each iteration - plot this on a log scale to read the rate."""
-        raise NotImplementedError("[DAY 2] lab 1")
+        #raise NotImplementedError("[DAY 2] lab 1")
+        return [e.grad_norm for e in self.events]

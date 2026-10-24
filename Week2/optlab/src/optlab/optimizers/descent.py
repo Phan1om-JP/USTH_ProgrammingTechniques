@@ -48,17 +48,52 @@ class DescentOptimizer(IOptimizer):
 
     def minimize(self, objective: object, x0: Vec) -> OptimizeResult:
         """Requires an `IObjective`."""
-        raise NotImplementedError("[DAY 2] lab 1")
+        #raise NotImplementedError("[DAY 2] lab 1")
+        if not isinstance(objective, IObjective):
+            raise TypeError("minimize needs an IObjective")
+        x = x0
+        iteration = 0
+        while (True):
+            g = objective.gradient(x)
+            d = self.direction.direction(objective, x, g)
+            try:
+                alpha = self.line_search.step(objective, x, g, d)
+            except LineSearchFailed:
+                return OptimizeResult(x=x, value=objective.value(x), grad_norm=float(np.linalg.norm(g)), iterations = iteration, converged=False, message="line search failed")
+            
+            x = x + alpha * d
+            iteration += 1
+
+            value = objective.value(x)
+            grad_norm = float(np.linalg.norm(objective.gradient(x)))
+            event = StepEvent(iteration, x, value, grad_norm, alpha)
+
+            for obs in self.observers:
+                obs.on_step(event) # Write in diary
+            if self.stop.should_stop(event):
+                break
+            
+        converged = getattr(self.stop, "means_convergence", False)
+        message = "converged" if converged else "stopped without converging"
+        return OptimizeResult(x = x, value = value, grad_norm = grad_norm, iterations = iteration , converged = converged, message= message)
+    
 
 
 def gradient_descent(tol: float = 1e-6, max_iter: int = 1000) -> DescentOptimizer:
     """[DAY 2] Steepest descent with an Armijo line search."""
-    raise NotImplementedError("[DAY 2] lab 2")
-
+    #raise NotImplementedError("[DAY 2] lab 2")
+    direction = SteepestDescent()
+    line_search = Armijo()
+    stop = AnyOf(GradientNormBelow(tol), MaxIterations(max_iter))
+    return DescentOptimizer(direction, line_search, stop)
 
 def momentum(beta: float = 0.9, alpha: float = 0.01, max_iter: int = 1000) -> DescentOptimizer:
     """[DAY 2] Heavy ball with a fixed step."""
-    raise NotImplementedError("[DAY 2] lab 3")
+    #raise NotImplementedError("[DAY 2] lab 3")
+    direction = HeavyBall(beta)
+    line_search = FixedStep(alpha)
+    stop = AnyOf(GradientNormBelow(), MaxIterations(max_iter))
+    return DescentOptimizer(direction, line_search, stop)
 
 
 def newton(tol: float = 1e-8, max_iter: int = 100) -> DescentOptimizer:

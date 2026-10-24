@@ -6,12 +6,13 @@ from .results import StepEvent
 
 class GradientNormBelow(IStoppingCriterion):
     """Stop once ||grad f|| <= tol. The only criterion here that means genuine convergence."""
-
+    means_convergence = True
     def __init__(self, tol: float = 1e-6) -> None:
         self.tol = tol
 
     def should_stop(self, event: StepEvent) -> bool:
-        raise NotImplementedError("[DAY 2] lab 1")
+        #raise NotImplementedError("[DAY 2] lab 1")
+        return event.grad_norm <= self.tol
 
 
 class MaxIterations(IStoppingCriterion):
@@ -21,7 +22,8 @@ class MaxIterations(IStoppingCriterion):
         self.max_iter = max_iter
 
     def should_stop(self, event: StepEvent) -> bool:
-        raise NotImplementedError("[DAY 2] lab 1")
+        #raise NotImplementedError("[DAY 2] lab 1")
+        return event.iteration >= self.max_iter
 
 
 class AnyOf(IStoppingCriterion):
@@ -35,4 +37,9 @@ class AnyOf(IStoppingCriterion):
         self.criteria = criteria
 
     def should_stop(self, event: StepEvent) -> bool:
-        raise NotImplementedError("[DAY 2] lab 1")
+        #raise NotImplementedError("[DAY 2] lab 1")
+        fired = [c for c in self.criteria if c.should_stop(event)]
+        self.means_convergence = any( # did any of the fired rules that fired mean real success
+            getattr(c, "means_convergence", False) for c in fired
+        )
+        return bool(fired)
