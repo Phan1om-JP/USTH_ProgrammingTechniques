@@ -22,7 +22,19 @@ def cholesky(A: Mat) -> Mat:
     Raises `NotPositiveDefiniteError` as soon as a pivot is non-positive. Vectorize the
     inner loop over i rather than writing three nested Python loops.
     """
-    raise NotImplementedError("[DAY 4] lab 1")
+    #raise NotImplementedError("[DAY 4] lab 1")
+    n = A.shape[0]
+    L = np.zeros((n, n), dtype=float)
+    # pivot case
+    for j in range (n):
+        pivot = A[j, j] - L[j, :j] @ L[j, :j]
+        if pivot <= 0.0: # pivot
+            raise NotPositiveDefiniteError(f"pivot {j} is {pivot:.3g}: matrix is not positive definite")
+        L[j, j] = np.sqrt(pivot)
+        # other cells
+        L[j+1 :, j] = (A[j + 1:, j] - L[j + 1:, :j] @ L[j, :j]) / L[j, j]
+    
+    return L
 
 
 def solve_lower(L: Mat, b: Vec) -> Vec:
